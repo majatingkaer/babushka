@@ -1,10 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Babushka hjemmeside</title>
-</head>
-<body>
+    <link href="https://fonts.googleapis.com/css?family=Audiowide|Bungee+Inline|Bungee+Shade&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Baumans&display=swap" rel="stylesheet">
 
-</body>
-</html>
+    <style>
+        body {
+            background-color: whitesmoke;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        img {
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Bungee Shade', cursive;
+            font-size: 6rem;
+            text-align: center;
+            color: #a70606;
+        }
+
+        h2 {
+            font-family: 'Baumans', cursive;
+            padding-left: 1vw;
+            color: whitesmoke;
+            background-color: #a70606;
+        }
+
+        h3 {
+            font-family: 'Baumans', cursive;
+            font-size: 2.5rem;
+            padding-left: 1vw;
+            color: #a70606;
+            text-align: center;
+        }
+
+        p {
+            font-family: 'Baumans', cursive;
+            padding-left: 2vw;
+            color: #a70606;
+        }
+
+        .data-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            max-width: 1200px;
+            grid-gap: 3vw;
+            margin: 3vw;
+        }
+
+        article {
+            border: 2px solid #a70606;
+        }
+
+        button {
+            font-family: 'Baumans', cursive;
+            color: #a70606;
+            text-align: center;
+            font-size: 1.7rem;
+            margin: 1vw;
+            border: solid #a70606 2px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+        }
+
+        .valgt {
+            background-color: #a70606;
+            color: white;
+        }
+
+        button:hover {
+            transition: .2s ease-out;
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1>BISTRO BABUSHKA</h1>
+    <h3>Alle retter</h3>
+    <nav>
+        <button class="filter valgt" data-kategori="alle">Alle retter</button>
+        <button class="filter" data-kategori="forretter">Forretter</button>
+        <button class="filter" data-kategori="hovedretter">Hovedretter</button>
+        <button class="filter" data-kategori="desserter">Desserter</button>
+        <button class="filter" data-kategori="drikkevarer">Drikkevarer</button>
+    </nav>
+
+
+    <section class="data-container">
+    </section>
+    <template>
+        <article>
+            <h2></h2>
+            <img src="" alt="">
+            <p class="kategori"></p>
+            <p class="pris"></p>
+            <p class="kort"></p>
+            <p class="lang"></p>
+            <p class="oprindelse"></p>
+        </article>
+    </template>
+
+
+    <script>
+        const link = "https://spreadsheets.google.com/feeds/list/17Dd7DvkPaFamNUdUKlrFgnH6POvBJXac7qyiS6zNRw0/od6/public/values?alt=json";
+        let retter = [];
+        let filter = "alle";
+        const container = document.querySelector(".data-container");
+        const retTemplate = document.querySelector("template");
+
+        document.addEventListener("DOMContentLoaded", start);
+
+        function start() {
+            loadData();
+            klikBar();
+        }
+
+        async function loadData() {
+            const response = await fetch(link);
+            retter = await response.json();
+            console.log(retter);
+            visRetter();
+        }
+
+        function visRetter() {
+            container.innerHTML = "";
+
+            retter.feed.entry.forEach(ret => {
+                if (filter == "alle" || filter == ret.gsx$kategori.$t) {
+                    let klon = retTemplate.cloneNode(true).content;
+                    klon.querySelector("h2").textContent = ret.gsx$navn.$t;
+                    klon.querySelector("img").src = ret.gsx$billede.$t;
+                    klon.querySelector(".kategori").textContent = `Kategori: ${ret.gsx$kategori.$t}`;
+                    klon.querySelector(".pris").textContent = `Pris: ${ret.gsx$pris.$t}`;
+                    klon.querySelector(".kort").textContent = `Kort: ${ret.gsx$kort.$t}`;
+                    /*klon.querySelector(".lang").textContent = `Lang: ${ret.gsx$lang.$t}`;*/
+                    klon.querySelector(".oprindelse").textContent = `Oprindelse: ${ret.gsx$oprindelse.$t}`;
+                    container.appendChild(klon);
+                }
+            })
+        }
+
+        function klikBar() {
+            document.querySelectorAll(".filter").forEach(elm => {
+                elm.addEventListener("click", filtrering);
+            })
+        }
+
+        function filtrering() {
+            console.log("FILTER");
+            filter = this.dataset.kategori;
+            document.querySelector("h3").textContent = this.textContent;
+            document.querySelectorAll(".filter").forEach(elementer => {
+                elementer.classList.remove("valgt");
+            })
+            this.classList.add("valgt");
+            visRetter();
+        }
+    </script>
+</body></html>
