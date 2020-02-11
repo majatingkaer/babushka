@@ -159,8 +159,10 @@
                     klon.querySelector(".kategori").textContent = `Kategori - ${ret.gsx$kategori.$t}`;
                     klon.querySelector(".pris").textContent = `${ret.gsx$pris.$t} kr`;
                     klon.querySelector(".kort").textContent = `${ret.gsx$kort.$t}`;
-                    /*klon.querySelector(".lang").textContent = `Lang: ${ret.gsx$lang.$t}`;*/
                     klon.querySelector(".oprindelse").textContent = `Oprindeligt fra ${ret.gsx$oprindelse.$t}`;
+                    klon.querySelector("article").addEventListener("click", () => {
+                        location.href = "detalje.html?id=" + ret.gsx$id.$t;
+                    });
                     container.appendChild(klon);
                 }
             })
