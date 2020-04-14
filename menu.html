@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+    <link href="https://fonts.googleapis.com/css?family=Audiowide|Bungee+Inline|Bungee+Shade&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Baumans&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: whitesmoke;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        img {
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Bungee Shade', cursive;
+            font-size: 6rem;
+            text-align: center;
+            color: #a70606;
+            margin: 0px;
+        }
+
+        h2 {
+            font-family: 'Baumans', cursive;
+            color: whitesmoke;
+            background-color: #a70606;
+        }
+
+        h3 {
+            font-family: 'Baumans', cursive;
+            font-size: 2.5rem;
+            color: #a70606;
+            text-align: center;
+            margin-top: 8vw;
+            margin-bottom: 0vw;
+        }
+
+        p {
+            font-family: 'Baumans', cursive;
+            padding-left: 2vw;
+            color: #a70606;
+        }
+
+        .data-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            max-width: 1200px;
+            grid-gap: 3vw;
+            margin: 3vw 10vw 0vw 10vw;
+        }
+
+        article {
+            border: 2px solid #a70606;
+        }
+
+        article:hover {
+            transition: .2s ease-out;
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+
+        nav a {
+            font-family: 'Baumans', cursive;
+            color: #a70606;
+            text-align: center;
+            font-size: 1.7rem;
+            margin: 5px;
+            border: solid #a70606 2px;
+            text-decoration: none;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .valgt {
+            background-color: #a70606;
+            color: white;
+        }
+
+        button:hover {
+            transition: .2s ease-out;
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="forside.html">Forside</a>
+        <a href="menu.html">Vores menu</a>
+        <a href="om.html">Om os</a>
+        <a href="kontakt.html">Kontakt</a>
+    </nav>
+
+    <h1>Alle retter</h1>
+
+    <section class="data-container">
+    </section>
+    <template>
+        <article>
+            <h2 class="title"></h2>
+            <img>
+            <p class="pris"></p>
+            <p class="type"></p>
+            <p class="beskrivelse"></p>
+            <p class="oprindelse"></p>
+        </article>
+    </template>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", start);
+
+        const endpoint = "http://majatingkaer.dk/kea/babushkaWP/wordpress/wp-json/wp/v2/ret";
+
+        const container = document.querySelector(".data-container");
+        const retTemplate = document.querySelector("template").content;
+
+        function start() {
+            loadData();
+        }
+
+        async function loadData() {
+            const response = await fetch(endpoint);
+            console.log(response);
+            const json = await response.json();
+            vis(json);
+        }
+
+        function vis(retter) {
+            console.log(retter);
+            retter.forEach(ret => {
+                const klon = retTemplate.cloneNode(true);
+                klon.querySelector(".title").textContent = ret.title.rendered;
+                klon.querySelector("img").src = ret.billede.guid;
+                klon.querySelector(".pris").innerHTML = ret.pris + " kr.";
+                klon.querySelector(".type").innerHTML = "Denne ret er en " + ret.rettype;
+                klon.querySelector(".beskrivelse").innerHTML = ret.beskrivelse;
+                klon.querySelector(".oprindelse").innerHTML = "Retten stammer oprindeligt fra " + ret.region;
+                klon.querySelector("article").addEventListener("click", () => {
+                    location.href= `singleview.html?id=${ret.id}`
+                })
+                container.appendChild(klon);
+            })
+        }
+    </script>
+</body></html>

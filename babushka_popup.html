@@ -172,7 +172,7 @@
 
 
     <script>
-        const link = "https://spreadsheets.google.com/feeds/list/17Dd7DvkPaFamNUdUKlrFgnH6POvBJXac7qyiS6zNRw0/od6/public/values?alt=json";
+        const link = "http://majatingkaer.dk/kea/babushkaWP/wordpress/wp-json/wp/v2/posts/";
         let retter = [];
         let filter = "alle";
         const container = document.querySelector(".data-container");
@@ -195,7 +195,8 @@
         function visRetter() {
             container.innerHTML = "";
 
-            retter.feed.entry.forEach(ret => {
+            retter.forEach(ret => {
+                console.log(ret);
                 if (filter == "alle" || filter == ret.gsx$kategori.$t) {
                     let klon = retTemplate.cloneNode(true).content;
                     klon.querySelector("h2").textContent = ret.gsx$navn.$t;
