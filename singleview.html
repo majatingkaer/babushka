@@ -111,7 +111,6 @@
 
     <section class="data-container">
     </section>
-    <template>
         <article>
             <h2 class="title"></h2>
             <img>
@@ -120,7 +119,6 @@
             <p class="beskrivelse"></p>
             <p class="oprindelse"></p>
         </article>
-    </template>
 
 
     <script>
@@ -139,7 +137,7 @@
 
         //vis data om retten
         function visRet() {
-            document.querySelector(".title").textContent = ret.titel.rendered;
+            document.querySelector(".title").textContent = ret.title.rendered;
             document.querySelector(".beskrivelse").innerHTML = ret.beskrivelse;
             document.querySelector("img").src = ret.billede.guid;
         }
