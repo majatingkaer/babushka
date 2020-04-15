@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scroll</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        img {
+            width: 100%;
+        }
+
+        main {
+            width: 50vw;
+        }
+
+        .carousel {
+            width: 100%;
+            height: 100%;
+        }
+
+        .the_container {
+            display: flex;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+        }
+
+        .the_container section {
+            scroll-snap-align: start;
+            min-width: 100%;
+        }
+
+        .carousel_inner {
+            display: flex;
+        }
+
+        .legend_pic_container section {
+            display: inline-block;
+            height: 7vh;
+        }
+
+        .legend_pic_container img{
+            height: 100%;
+            width: auto;
+        }
+
+        .bwd,
+        .fwd {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .bwd p,
+        .fwd p {
+            z-index: 10;
+            position: absolute;
+        }
+
+        .fwd p {
+            margin-left: -10px;
+        }
+    </style>
+</head>
+
+<body>
+    <template>
+        <section>
+            <img class="caro_imgs" src="" alt="">
+        </section>
+    </template>
+
+    <main>
+        <div class="carousel">
+
+            <div class="carousel_inner">
+                <div class="bwd">
+                    <p>&lt;</p>
+                </div>
+                <div class="the_container"></div>
+                <div class="fwd">
+                    <p>&gt;</p>
+                </div>
+            </div>
+
+            <div class="legend_pic_container"></div>
+
+
+        </div>
+    </main>
+
+
+    <script>
+        "use strict"
+        const url = "http://majatingkaer.dk/kea/babushkaWP/wordpress/wp-json/wp/v2/huse/114";
+
+        let theJSON;
+        let numberOfPicsInCarousel;
+        let caroCurrentNum = 0;
+
+        document.addEventListener("DOMContentLoaded", start);
+
+        function start() {
+            hentJSON();
+            document.querySelector(".fwd").addEventListener("click", fwd);
+            document.querySelector(".bwd").addEventListener("click", bwd);
+        }
+
+        //async og await betyder, at man ikke går videre før dette funktion, hvor json hentes, er færdig
+        async function hentJSON() {
+            const response = await fetch(url);
+            theJSON = await response.json();
+            console.log(theJSON);
+            buildCarousel();
+        }
+
+        function buildCarousel() {
+            //console.log(theJSON.husbilleder);
+            numberOfPicsInCarousel = theJSON.husbilleder.length;
+            theJSON.husbilleder.forEach((billede, index) => {
+                const theClone = document.querySelector("template").cloneNode(true).content;
+                const secondClone = document.querySelector("template").cloneNode(true).content;
+
+                theClone.querySelector("img").src = billede.guid;
+                secondClone.querySelector("img").src = billede.guid;
+
+                document.querySelector(".the_container").appendChild(theClone);
+                document.querySelector(".legend_pic_container").appendChild(secondClone);
+            })
+
+            document.querySelector(".the_container").addEventListener("scroll", scrollFunction)
+        }
+
+        function scrollFunction(){
+            //console.log("Jeg scroller");
+            caroCurrentNum = Math.round(document.querySelector(".the_container").scrollLeft / document.querySelector(".caro_imgs").width);
+            console.log(caroCurrentNum);
+        }
+
+
+
+        function fwd() {
+            caroCurrentNum++;
+            navigate();
+        }
+
+        function bwd() {
+            caroCurrentNum--;
+            navigate();
+        }
+
+        function navigate() {
+            document.querySelector(".the_container").scrollTo(
+                {left: caroCurrentNum * document.querySelector(".caro_imgs").width, behavior:"smooth"}
+            )
+        }
+
+    </script>
+</body></html>
